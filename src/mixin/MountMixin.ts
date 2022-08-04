@@ -23,22 +23,28 @@ export default {
             return
         }
 
-        const mountedNodes = new Set<Node>()
-        this.$options[MOUNTED_NODES] = mountedNodes
-
-        this.$mount = (vnode: MountNode, target: string = "default") => {
-            const node = instance.mount(vnode, target, ctx)
-            node.onRemove(() => mountedNodes.delete(node))
-            mountedNodes.add(node)
-            return node
-        }
-    },
-    beforeUnmount() {
         const {
             destroyOnUnmount = true
         } = this.$options.mountOptions ?? {}
 
-        if (MOUNTED_NODES in this.$options && destroyOnUnmount) {
+        let mountedNodes = null as unknown as Set<Node>
+        if (destroyOnUnmount) {
+            mountedNodes = new Set()
+            this.$options[MOUNTED_NODES] = mountedNodes
+        }
+
+        this.$mount = (vnode: MountNode, target: string = "default") => {
+            const node = instance.mount(vnode, target, ctx)
+            if (destroyOnUnmount && mountedNodes) {
+                node.onRemove(() => mountedNodes.delete(node))
+                mountedNodes.add(node)
+            }
+            return node
+        }
+    },
+    beforeUnmount() {
+
+        if (MOUNTED_NODES in this.$options) {
             const nodes = this.$options[MOUNTED_NODES] as Set<Node>
             nodes.forEach((node: Node) => node.unmount())
             nodes.clear()

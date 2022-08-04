@@ -26,9 +26,10 @@ export default function useMount(options: UseMountOptions = {}) {
         warn("Please install the Mount plugin before using the useMount hook")
     }
 
-    const mountedNodes = new Set<Node>()
+    let mountedNodes = null as unknown as Set<Node>
 
-    if (ctx) {
+    if (ctx && destroyOnUnmount) {
+        mountedNodes = new Set()
         onBeforeUnmount(() => {
             mountedNodes
                 .forEach((node) => node.unmount())
@@ -42,7 +43,7 @@ export default function useMount(options: UseMountOptions = {}) {
 
     return function (vnode: MountNode, target: string = "default") {
         const node = instance.mount(vnode, target, ctx)
-        if (destroyOnUnmount) {
+        if (destroyOnUnmount && mountedNodes) {
             node.onRemove(() => mountedNodes.delete(node))
             mountedNodes.add(node)
         }
