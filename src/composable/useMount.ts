@@ -5,7 +5,7 @@ import Node                                                from "~/node"
 import {__DEV__}                                           from "~/utils"
 import {MOUNT}                                             from "~/symbols"
 
-type Options = {
+export type UseMountOptions = {
     /**
      * Destroy all the mounted components when the
      * parent components gets unmounted
@@ -13,7 +13,7 @@ type Options = {
     destroyOnUnmount?: boolean
 }
 
-export default function useMount(options: Options = {}) {
+export default function useMount(options: UseMountOptions = {}) {
 
     const {
         destroyOnUnmount = true

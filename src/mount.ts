@@ -2,17 +2,21 @@ import {App, ComponentInternalInstance, markRaw, reactive} from "vue"
 
 import {MOUNT}           from "./symbols"
 import Node, {MountNode} from "./node"
+import MountMixin        from "~/mixin/MountMixin"
 
 let key = 0
 
 export default class Mount {
 
     static #instance: Mount
+    static #instances = new Map<App, Mount>()
 
     static install(app: App) {
         const instance = new Mount(app)
         app.provide(MOUNT, instance)
+        app.mixin(MountMixin)
         Mount.#instance = instance
+        Mount.#instances.set(app, instance)
     }
 
     /**
@@ -20,6 +24,10 @@ export default class Mount {
      */
     static get instance() {
         return Mount.#instance
+    }
+
+    static getInstanceFor(app: App) {
+        return Mount.#instances.get(app)
     }
 
     #app: App
