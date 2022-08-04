@@ -43,7 +43,7 @@
     </button>
   </div>
   <div class="container mx-auto text-center items-center flex flex-col">
-    <MountTarget/>
+    <MountTarget name="reactive"/>
   </div>
 </template>
 
@@ -68,12 +68,10 @@ export default defineComponent({
     const mount = useMount()
 
     function mountReactive() {
-      mount(
-          () => h(HelloWorld, {
+      mount(() => h(HelloWorld, {
             msg: inputRef.value,
             name: form.name
-          })
-      )
+          }), 'reactive')
     }
 
     return {

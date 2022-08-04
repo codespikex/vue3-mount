@@ -12,10 +12,12 @@
   </div>
 
   <component :is="currentExample"/>
+  <MountTarget/>
 </template>
 
 <script lang="ts">
 import {defineComponent, ref} from "vue"
+import {MountTarget}          from "~/index"
 
 const examples = Object.entries(import.meta.globEager("./views/**.vue"))
     .reduce((entries, [fileName, md]) => {
@@ -29,7 +31,10 @@ const examples = Object.entries(import.meta.globEager("./views/**.vue"))
 
 export default defineComponent({
   name: "App",
-  components: examples,
+  components: {
+    ...examples,
+    MountTarget
+  },
   setup() {
 
     const views = Array.from(Object.keys(examples))

@@ -14,11 +14,9 @@
 <script lang="ts">
 import {defineComponent, h} from "vue"
 import OptionsApiTest       from "play/components/OptionsApiTest.vue"
-import MountTarget          from "~/components/MountTarget"
 
 export default defineComponent({
   name: "OptionsApiDemo",
-  components: {MountTarget},
   mountOptions: {
     destroyOnUnmount: false
   },
