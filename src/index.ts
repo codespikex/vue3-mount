@@ -10,7 +10,7 @@ export default Mount
 export {
     Mount,
     useMount,
+    useMountNode,
     MountTarget,
-    ControlledTransition,
-    useMountNode
+    ControlledTransition
 }

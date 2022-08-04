@@ -31,7 +31,7 @@ export default function useMount(options: Options = {}) {
     if (ctx) {
         onBeforeUnmount(() => {
             mountedNodes
-                .forEach((node) => instance?.removeNode(node))
+                .forEach((node) => node.unmount())
             mountedNodes.clear()
         })
     }
