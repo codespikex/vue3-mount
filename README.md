@@ -43,12 +43,8 @@ app.use(Vue3Mount)
   <!-- Define a named mount target -->
   <MountTarget name="modals"/>
 </template>
-<script>
+<script lang="ts" setup>
 import MountTarget from "vue3-mount"
-
-export default {
-  components: {MountTarget}
-}
 </script>
 ```
 
@@ -121,7 +117,9 @@ unmount.force()
 ```
 
 ### Using Options API
+
 Mounting the component
+
 ```vue
 // SomeComponent.vue
 <template>
@@ -153,6 +151,7 @@ export default defineComponent({
 
 </script>
 ```
+
 Accessing Node instance from Mounted component
 
 ```vue
