@@ -63,7 +63,7 @@ export default {
 <script lang="ts" setup>
 import {h}        from "vue"
 import {useMount} from "vue3-mount"
-import Modal      from "./components/Modal.vie"
+import Modal      from "./components/Modal.vue"
 
 const mount = useMount()
 
@@ -94,7 +94,7 @@ function mountModal() {
 <!-- Rest of the code -->
 </ControlledTransition>
 <script lang="ts" setup>
-import {ControlledTransition} from "vue3-mount";
+import {ControlledTransition} from "vue3-mount"
 </script>
 ```
 
@@ -122,3 +122,4 @@ unmount.force()
 ## Todo
 
 - Add unit tests
+- Add Option API support
