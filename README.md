@@ -30,6 +30,17 @@ import Vue3Mount from 'vue3-mount'
 const app = createApp(App)
 app.use(Vue3Mount)
 ```
+### 2. CDN
+Install
+```html
+<script src="https://unpkg.com/vue3-mount"></script>
+```
+#### Register
+```js
+const {Mount: Vue3Mount} = window.Vue3Mount
+const app = createApp(App)
+app.use(Vue3Mount)
+```
 
 ## Usage
 
