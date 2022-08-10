@@ -13,12 +13,13 @@ export default defineComponent({
     },
     setup(props, {slots}) {
         const ctx = getCurrentInstance()
-        provide(NODE, props.node)
 
         if (props.node.parentCtx) {
             //@ts-ignore
             Object.assign(ctx.provides, props.node.parentCtx.provides ?? {})
         }
+
+        provide(NODE, props.node)
 
         return () => slots.default?.()
     }
