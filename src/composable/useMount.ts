@@ -9,14 +9,22 @@ export type UseMountOptions = {
     /**
      * Destroy all the mounted components when the
      * parent components gets unmounted
+     * @default true
      */
     destroyOnUnmount?: boolean
+    /**
+     * Provides parent ctx to child nodes
+     * @default true
+     */
+    provideCtx?: boolean
+
 }
 
 export default function useMount(options: UseMountOptions = {}) {
 
     const {
-        destroyOnUnmount = true
+        destroyOnUnmount = true,
+        provideCtx = true
     } = options
 
     const ctx = getCurrentInstance()
@@ -42,7 +50,8 @@ export default function useMount(options: UseMountOptions = {}) {
     }
 
     return function (vnode: MountNode, target: string = "default") {
-        const node = instance.mount(vnode, target, ctx)
+        let parentCtx = provideCtx ? ctx : undefined
+        const node = instance.mount(vnode, target, parentCtx)
         if (destroyOnUnmount && mountedNodes) {
             node.onRemove(() => mountedNodes.delete(node))
             mountedNodes.add(node)
