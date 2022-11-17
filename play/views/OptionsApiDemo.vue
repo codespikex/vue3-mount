@@ -14,15 +14,17 @@
 <script lang="ts">
 import {defineComponent, h} from "vue"
 import OptionsApiTest       from "play/components/OptionsApiTest.vue"
+import {MountTarget} from "~/index"
 
 export default defineComponent({
   name: "OptionsApiDemo",
-  mountOptions: {
-    destroyOnUnmount: false
+  components: {MountTarget},
+  vueMount: {
+    destroy: true
   },
   methods: {
     mountTest() {
-      this.$mount(() => h(OptionsApiTest))
+      this.$vueMount(() => h(OptionsApiTest))
     }
   }
 })

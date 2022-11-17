@@ -1,32 +1,32 @@
 <template>
-  <ControlledTransition
+  <transition
       enter-active-class="duration-300"
       leave-active-class="duration-300"
       enter-from-class="opacity-0"
       leave-to-class="opacity-0"
-      :appear="true"
+      appear
   >
-    <div class="flex gap-2">
+    <div class="flex gap-2" v-mount>
       <p>{{ injectedRef }} {{ msg }} {{ name }}!</p>
       <button @click="unmount" class="text-blue-500">Unmount</button>
     </div>
-  </ControlledTransition>
+  </transition>
 </template>
 
 <script lang="ts">
 import {defineComponent, inject} from "vue"
-import ControlledTransition      from "~/components/Transition"
-import {useMountNode}            from "~/index"
+import {vMount}  from "~/index"
+import {getNode} from "~/index"
 
 export default defineComponent({
   name: "Reactive",
-  components: {ControlledTransition},
+  directives: {mount: vMount},
   props: {
     msg: String,
     name: String
   },
   setup() {
-    const unmount = useMountNode()
+    const unmount = getNode()
 
     const injectedRef = inject("text", "Not provided")
 

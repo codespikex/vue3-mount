@@ -1,27 +1,28 @@
 <template>
   <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <ControlledTransition
+    <transition
         enter-active-class="duration-300"
         leave-active-class="duration-300"
         enter-from-class="opacity-0"
         leave-to-class="opacity-0"
-        :appear="true"
+        appear
     >
-      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-    </ControlledTransition>
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" v-mount></div>
+    </transition>
 
     <div class="fixed z-10 inset-0 overflow-y-auto">
       <div @click.self="unmount"
            class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
-        <ControlledTransition
+        <transition
             enter-active-class="ease-out duration-300"
             leave-active-class="ease-out duration-300"
             enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            :appear="true"
+            appear
         >
           <div
-              class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+              class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full"
+              v-mount>
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div class="sm:flex sm:items-start">
                 <div
@@ -39,11 +40,11 @@
                     </slot>
                   </h3>
                   <div class="mt-2">
-                    <p class="text-sm text-gray-500">
+                    <Paragraph class="text-sm text-gray-500">
                       <slot name="content">
                         You can open as many modals as you want want.
                       </slot>
-                    </p>
+                    </Paragraph>
                   </div>
                 </div>
               </div>
@@ -61,11 +62,11 @@
                   type="button"
                   class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
               >
-                Cancel
+                Cancel Modal
               </button>
             </div>
           </div>
-        </ControlledTransition>
+        </transition>
       </div>
     </div>
 
@@ -73,18 +74,21 @@
 </template>
 
 <script lang="ts">
-import {defineComponent}                    from "vue"
-import {ControlledTransition, useMountNode} from "~/index"
+import {defineComponent} from "vue"
+import {getNode}         from "~/index"
+import Paragraph         from "./Paragraph.vue"
+import {vMount}          from "~/index"
 
 export default defineComponent({
   name: "Modal",
-  components: {ControlledTransition},
+  components: {Paragraph},
+  directives: {mount: vMount},
   props: {
     onConfirm: Function
   },
   setup() {
 
-    const unmount = useMountNode()
+    const unmount = getNode()
 
     return {
       unmount
