@@ -12,8 +12,8 @@ export type ComponentInstance = ComponentInternalInstance & {
 export type NodeOptions = {
     vnode: MountNode
     id: string
-    target: string
-    ctx?: ComponentInstance | null
+    to: string
+    ctx?: ComponentInstance
     vueMount: Mount
 }
 
@@ -21,25 +21,21 @@ export default class Node {
 
     readonly vnode: MountNode
     readonly id: string
-    readonly target: string
+    readonly to: string
 
-    readonly #ctx?: ComponentInstance | null
+    readonly ctx?: ComponentInstance
     readonly #vueMount: Mount
     #um: Function[] = []
     #rm: Function[] = []
     #unmounted = false
 
-    get parentCtx() {
-        return this.#ctx
-    }
-
-    constructor({vnode, id, target, vueMount, ctx}: NodeOptions) {
+    constructor({vnode, id, to, vueMount, ctx}: NodeOptions) {
         markRaw(this)
         this.vnode = vnode
         this.id = id
-        this.target = target
+        this.to = to
         this.#vueMount = vueMount
-        this.#ctx = ctx
+        this.ctx = ctx
     }
 
     /**

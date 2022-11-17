@@ -9,11 +9,11 @@ import Node        from "./Node"
 import getVueMount from "~/composable/getVueMount"
 
 export default defineComponent({
-    name: "MountTarget",
+    name: "Portal",
     props: {
         name: {
             type: String,
-            default: () => "default"
+            default: () => "portal"
         }
     },
     setup(props) {

@@ -1,6 +1,6 @@
 import Mount from "./mount"
 
-import MountTarget from "./components/MountTarget"
+import Portal from "./components/Portal"
 
 import {vMount} from "~/directives/vMount"
 
@@ -14,12 +14,13 @@ import NodeMixin         from "~/mixin/NodeMixin"
 export default Mount
 
 export const useMountNode = getNode
+export const MountTarget = Portal
 
 export {
     Mount,
     useMount,
     getNode,
-    MountTarget,
+    Portal,
     vMount,
 
     NodeMixin

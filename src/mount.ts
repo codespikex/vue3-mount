@@ -1,4 +1,4 @@
-import {markRaw, reactive}                    from "vue"
+import {markRaw, reactive}                   from "vue"
 import type {App, ComponentInternalInstance} from "vue"
 
 import {VUE_MOUNT_SYMBOL}                  from "./symbols"
@@ -44,13 +44,13 @@ export default class Mount {
     /**
      * Get all the available vNodes for a specific mount target
      * @internal
-     * @param target
+     * @param name
      */
-    getNodes(target: string = "default") {
-        if (!this.#nodes[target])
-            this.#nodes[target] = new Map()
+    getNodes(name: string = "portal") {
+        if (!this.#nodes[name])
+            this.#nodes[name] = new Map()
 
-        return this.#nodes[target]
+        return this.#nodes[name]
     }
 
     #getId(target: string) {
@@ -58,19 +58,27 @@ export default class Mount {
         return `${target}-${id}`
     }
 
-    mount(vnode: MountNode, target: string = "default", ctx?: ComponentInternalInstance | null) {
-        const id = this.#getId(target)
+    createNode(vnode: MountNode, to: string = "portal", ctx?: ComponentInternalInstance | null) {
+        const id = this.#getId(to)
 
-        if (!this.#nodes[target])
-            this.#nodes[target] = new Map()
+        return new Node({vnode, id, to, ctx: ctx as ComponentInstance, vueMount: this})
+    }
 
-        const node = new Node({vnode, target, id, ctx: ctx as ComponentInstance, vueMount: this})
-        this.#nodes[target].set(id, node)
+    addNode(node: Node) {
+        if (!this.#nodes[node.to])
+            this.#nodes[node.to] = new Map()
+
+        this.#nodes[node.to].set(node.id, node)
         return node
     }
 
+    mount(vnode: MountNode, to: string = "portal", ctx?: ComponentInternalInstance | null) {
+        const node = this.createNode(vnode, to, ctx)
+        return this.addNode(node)
+    }
+
     deleteNode(node: Node) {
-        if (!this.#nodes[node.target]) return
-        this.#nodes[node.target].delete(node.id)
+        if (!this.#nodes[node.to]) return
+        this.#nodes[node.to].delete(node.id)
     }
 }

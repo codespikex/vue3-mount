@@ -50,22 +50,22 @@ app.use(Vue3Mount)
 
 ## Usage
 
-### Define a MountTarget
+### Define a Portal
 
 ```vue
 // App.vue
 <template>
   <!-- Rest of the code -->
-  <MountTarget/>
+  <Portal/>
   <!-- Define a named mount target -->
-  <MountTarget name="modals"/>
+  <Portal name="modals"/>
 </template>
 <script lang="ts" setup>
-import MountTarget from "vue3-mount"
+import {Portal} from "vue3-mount"
 </script>
 ```
 
-> At-least one mount target is required.
+> At-least one portal is required.
 
 ### Mounting the component
 

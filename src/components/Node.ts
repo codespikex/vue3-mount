@@ -21,9 +21,9 @@ export default defineComponent({
     },
     setup(props, {slots}) {
         const ctx = getCurrentInstance() as ComponentInstance
-        if (props.node.parentCtx) {
-            for (const key in props.node.parentCtx.provides)
-                ctx.provides[key] = props.node.parentCtx.provides[key]
+        if (props.node.ctx) {
+            for (const key in props.node.ctx.provides)
+                ctx.provides[key] = props.node.ctx.provides[key]
         }
 
         provide(NODE_SYMBOL, props.node)

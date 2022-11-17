@@ -33,8 +33,8 @@ export default {
             this.$options[MIXIN_MAP_SYMBOL] = _nodes
         }
 
-        this.$vueMount = (vnode: MountNode, target: string = "default") => {
-            const node = vueMount.mount(vnode, target, ctx)
+        this.$vueMount = (vnode: MountNode, to: string = "portal") => {
+            const node = vueMount.mount(vnode, to, ctx)
             if (destroy && _nodes) {
                 node.__removeHook(() => _nodes.delete(node.id))
                 _nodes.set(node.id, node)
