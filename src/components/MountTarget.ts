@@ -1,7 +1,12 @@
-import {defineComponent, h} from "vue"
+import {
+    defineComponent,
+    Fragment,
+    h,
+    renderList,
+} from "vue"
 
-import useMountSource from "~/composable/useMountSource"
-import NodeProxy      from "./NodeProxy"
+import Node        from "./Node"
+import getVueMount from "~/composable/getVueMount"
 
 export default defineComponent({
     name: "MountTarget",
@@ -12,12 +17,15 @@ export default defineComponent({
         }
     },
     setup(props) {
-        const source = useMountSource()
-        const nodes = source?.getNodesFor(props.name)
+        const vueMount = getVueMount()
+        if (!vueMount) {
+            return () => h(Fragment)
+        }
 
         return () => {
-            return Array.from(nodes?.values() ?? []).map((node) => {
-                return h(NodeProxy, {key: node.id, node}, () => node.vnode())
+            const _map = vueMount.getNodes(props.name)
+            return renderList(_map, ([id, node]) => {
+                return h(Node, {key: id, node}, node.vnode)
             })
         }
     }

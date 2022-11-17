@@ -5,14 +5,26 @@ import Mount from "~/mount"
 
 export type MountNode = () => VNode | VNode[]
 
+export type ComponentInstance = ComponentInternalInstance & {
+    provides: Record<string | symbol, any>
+}
+
+export type NodeOptions = {
+    vnode: MountNode
+    id: string
+    target: string
+    ctx?: ComponentInstance | null
+    vueMount: Mount
+}
+
 export default class Node {
 
     readonly vnode: MountNode
     readonly id: string
     readonly target: string
 
-    readonly #ctx?: ComponentInternalInstance | null
-    readonly #api: Mount
+    readonly #ctx?: ComponentInstance | null
+    readonly #vueMount: Mount
     #um: Function[] = []
     #rm: Function[] = []
     #unmounted = false
@@ -21,20 +33,31 @@ export default class Node {
         return this.#ctx
     }
 
-    constructor(vnode: MountNode, id: string, target: string, api: Mount, ctx?: ComponentInternalInstance | null) {
+    constructor({vnode, id, target, vueMount, ctx}: NodeOptions) {
         markRaw(this)
         this.vnode = vnode
         this.id = id
         this.target = target
-        this.#api = api
+        this.#vueMount = vueMount
         this.#ctx = ctx
     }
 
-    onUnmount(hook: Function) {
+    /**
+     * @internal
+     */
+    __unmountHook(hook: Function) {
         this.#um.push(hook)
+        return () => {
+            const idx = this.#um.indexOf(hook)
+            if (idx === -1) return
+            this.#um.splice(idx, 1)
+        }
     }
 
-    onRemove(hook: Function) {
+    /**
+     * @internal
+     */
+    __removeHook(hook: Function) {
         this.#rm.push(hook)
     }
 
@@ -42,18 +65,24 @@ export default class Node {
         this.#unmounted = true
         this.#rm.map((v) => v?.())
         this.#rm.length = 0
-        this.#api.removeNode(this)
+        this.#vueMount.deleteNode(this)
+        return true
     }
 
-    unmount() {
-        if (this.#unmounted) return
+    async unmount() {
+        if (this.#unmounted) return false
         this.#unmounted = true
-        if (!this.#um.length) return this.remove()
-        const cb = this.#um.map(v => v?.())
-        this.#um.length = 0
-        return Promise.all(cb).then(() => {
-            this.remove()
-            return true
+        await this.#transition()
+        return this.remove()
+    }
+
+    #transition() {
+        return new Promise(async (r: Function) => {
+            const um = this.#um
+            if (!um.length) return r()
+            await Promise.all(um.map(v => v?.()))
+            um.length = 0
+            r()
         })
     }
 }

@@ -2,11 +2,11 @@ import type {App, ComponentOptionsMixin} from "vue"
 
 import {warn} from "vue"
 
-import Mount             from "~/mount"
-import {__DEV__}         from "~/utils"
-import Node, {MountNode} from "~/node"
-import {MOUNTED_NODES}   from "~/symbols"
-
+import Mount              from "~/mount"
+import type {NodeMap}     from "~/mount"
+import {__DEV__}          from "~/utils"
+import type {MountNode}   from "~/node"
+import {MIXIN_MAP_SYMBOL} from "~/symbols"
 
 export default {
     beforeCreate() {
@@ -14,40 +14,39 @@ export default {
         const app = ctx?.appContext?.app as App
         if (!app) return
 
-        const instance = Mount.getInstanceFor(app)
-        if (!instance) {
+        const vueMount = Mount.getMount(app)
+        if (!vueMount) {
             if (__DEV__) {
                 const appName = app._instance?.type.name ?? "app"
-                warn(`Unable to find mount instance for app [${appName}]`)
+                warn(`Unable to find vueMount instance for app [${appName}]`)
             }
             return
         }
 
         const {
-            destroyOnUnmount = true
-        } = this.$options.mountOptions ?? {}
+            destroy = true
+        } = this.$options.vueMount ?? {}
 
-        let mountedNodes = null as unknown as Set<Node>
-        if (destroyOnUnmount) {
-            mountedNodes = new Set()
-            this.$options[MOUNTED_NODES] = mountedNodes
+        let _nodes: NodeMap
+        if (destroy) {
+            _nodes = new Map()
+            this.$options[MIXIN_MAP_SYMBOL] = _nodes
         }
 
-        this.$mount = (vnode: MountNode, target: string = "default") => {
-            const node = instance.mount(vnode, target, ctx)
-            if (destroyOnUnmount && mountedNodes) {
-                node.onRemove(() => mountedNodes.delete(node))
-                mountedNodes.add(node)
+        this.$vueMount = (vnode: MountNode, target: string = "default") => {
+            const node = vueMount.mount(vnode, target, ctx)
+            if (destroy && _nodes) {
+                node.__removeHook(() => _nodes.delete(node.id))
+                _nodes.set(node.id, node)
             }
             return node
         }
     },
     beforeUnmount() {
-
-        if (MOUNTED_NODES in this.$options) {
-            const nodes = this.$options[MOUNTED_NODES] as Set<Node>
-            nodes.forEach((node: Node) => node.unmount())
-            nodes.clear()
+        if (MIXIN_MAP_SYMBOL in this.$options) {
+            const _nodes = this.$options[MIXIN_MAP_SYMBOL] as NodeMap
+            _nodes.forEach((node) => node.unmount())
+            _nodes.clear()
         }
     }
 } as ComponentOptionsMixin

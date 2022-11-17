@@ -1,9 +1,11 @@
 import Mount from "./mount"
 
-import MountTarget            from "./components/MountTarget"
-import ControlledTransition   from "./components/Transition"
+import MountTarget from "./components/MountTarget"
+
+import {vMount} from "~/directives/vMount"
+
 import useMount               from "./composable/useMount"
-import useMountNode           from "./composable/useMountNode"
+import getNode                from "./composable/getNode"
 import type {UseMountOptions} from "~/composable/useMount"
 
 import Node, {MountNode} from "~/node"
@@ -11,12 +13,14 @@ import NodeMixin         from "~/mixin/NodeMixin"
 
 export default Mount
 
+export const useMountNode = getNode
+
 export {
     Mount,
     useMount,
-    useMountNode,
+    getNode,
     MountTarget,
-    ControlledTransition,
+    vMount,
 
     NodeMixin
 }
@@ -26,7 +30,7 @@ declare module "@vue/runtime-core" {
         /**
          * Mount a component using the vue3-mount api
          */
-        $mount(vnode: MountNode, target?: string): Node
+        $vueMount(vnode: MountNode, target?: string): Node
 
         /**
          * Access the mounted component node
@@ -35,6 +39,6 @@ declare module "@vue/runtime-core" {
     }
 
     export interface ComponentCustomOptions {
-        mountOptions?: UseMountOptions
+        vueMount?: UseMountOptions
     }
 }

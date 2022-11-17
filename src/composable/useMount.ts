@@ -1,17 +1,19 @@
-import Mount                                               from "~/mount"
-import type {MountNode}                                    from "~/node"
 import {getCurrentInstance, inject, onBeforeUnmount, warn} from "vue"
-import Node                                                from "~/node"
-import {__DEV__}                                           from "~/utils"
-import {MOUNT}                                             from "~/symbols"
+
+import Mount            from "~/mount"
+import type {NodeMap}   from "~/mount"
+import type {MountNode} from "~/node"
+
+import {__DEV__}                            from "~/utils"
+import {MIXIN_MAP_SYMBOL, VUE_MOUNT_SYMBOL} from "~/symbols"
 
 export type UseMountOptions = {
     /**
      * Destroy all the mounted components when the
-     * parent components gets unmounted
+     * parent component gets unmounted
      * @default true
      */
-    destroyOnUnmount?: boolean
+    destroy?: boolean
     /**
      * Provides parent ctx to child nodes
      * @default true
@@ -23,38 +25,42 @@ export type UseMountOptions = {
 export default function useMount(options: UseMountOptions = {}) {
 
     const {
-        destroyOnUnmount = true,
+        destroy = true,
         provideCtx = true
     } = options
 
     const ctx = getCurrentInstance()
-    const instance = ctx ? inject(MOUNT, Mount.instance) : Mount.instance
+    const vueMount: Mount = (ctx ? inject(VUE_MOUNT_SYMBOL, Mount.getMount()) : Mount.getMount) as any
 
-    if (!instance && __DEV__) {
+    if (!vueMount && __DEV__) {
         warn("Please install the Mount plugin before using the useMount hook")
     }
 
-    let mountedNodes = null as unknown as Set<Node>
+    let _nodes: NodeMap = ctx?.proxy?.$options[MIXIN_MAP_SYMBOL as any]
 
-    if (ctx && destroyOnUnmount) {
-        mountedNodes = new Set()
+    if (ctx && destroy) {
+        _nodes = _nodes ?? new Map()
         onBeforeUnmount(() => {
-            mountedNodes
-                .forEach((node) => node.unmount())
-            mountedNodes.clear()
+            _nodes.forEach((node) => node.unmount())
+            _nodes.clear()
         })
+
+        if (ctx?.proxy?.$options && typeof ctx.proxy.$options === "object") {
+            const _nodeOptions = ctx.proxy.$options
+            _nodeOptions[MIXIN_MAP_SYMBOL as any] = _nodes
+        }
     }
 
-    if (!ctx && destroyOnUnmount && __DEV__) {
-        warn("Please disable the destroyOnUnmount option when the hook is used outside of a setup scope.")
+    if (!ctx && destroy && __DEV__) {
+        warn("Please disable the destroy option when the hook is used outside of a setup scope.")
     }
 
     return function (vnode: MountNode, target: string = "default") {
-        let parentCtx = provideCtx ? ctx : undefined
-        const node = instance.mount(vnode, target, parentCtx)
-        if (destroyOnUnmount && mountedNodes) {
-            node.onRemove(() => mountedNodes.delete(node))
-            mountedNodes.add(node)
+        let _ctx = provideCtx ? ctx : undefined
+        const node = vueMount.mount(vnode, target, _ctx)
+        if (destroy && _nodes) {
+            node.__removeHook(() => _nodes.delete(node.id))
+            _nodes.set(node.id, node)
         }
         return node
     }

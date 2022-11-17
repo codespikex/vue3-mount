@@ -10,6 +10,7 @@
     "sourceMap": false,
     "strict": true,
     "checkJs": false,
+    "jsx": "preserve",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",

@@ -6,7 +6,7 @@ Vue3Mount is a lightweight api for dynamically mounting Vue components.
 
 - Supports reactive props
 - Supports inject/provide api
-- Provides Custom Transition component
+- Provides Custom directive for handling transition
 - Supports Options API
 
 ## Getting started
@@ -30,12 +30,18 @@ import Vue3Mount from 'vue3-mount'
 const app = createApp(App)
 app.use(Vue3Mount)
 ```
+
 ### 2. CDN
-Install
+
+#### Install
+
 ```html
+
 <script src="https://unpkg.com/vue3-mount"></script>
 ```
+
 #### Register
+
 ```js
 const {Mount: Vue3Mount} = window.Vue3Mount
 const app = createApp(App)
@@ -94,32 +100,34 @@ function mountModal() {
 </script>
 ```
 
-### Using the ControlledTransition component
+### Using the vMount directive
 
 ```vue
 // Modal.vue
-<ControlledTransition name="fade" appear>
-<!-- Rest of the code -->
-</ControlledTransition>
+<transition name="fade" appear>
+    <div v-mount>
+      <!-- Rest of the code -->
+    </div>
+</transition>
 <script lang="ts" setup>
-import {ControlledTransition} from "vue3-mount"
+import {vMount} from "vue3-mount"
 </script>
 ```
 
-> ControlledTransition is a wrapper around native Transition component and accepts all the native props
+> vMount is a wrapper around native vShow directive, but it also handles transitions for custom mounted components.
 
 ### Unmount the component
 
 ```vue
 // Modal.vue
 <script lang="ts" setup>
-import {useMountNode} from "vue3-mount"
+import {getNode} from "vue3-mount"
 
-const unmount = useMountNode()
-// const unmount = useMountNode(()=> /** beforeUnmountHook */)
+const unmount = getNode()
+// const unmount = getNode(()=> /** beforeUnmountHook */)
 
 // unmount the component
-// the ControlledTransition animations will be played
+// vMount directive will handle the transition
 unmount()
 // or if you want to destroy the component instantly
 unmount.force()
@@ -143,12 +151,12 @@ import Modal                from "./components/Modal.vue"
 export default defineComponent({
   methods: {
     mountModal() {
-      const node = this.$mount(() => h(Modal, {
+      const node = this.$vueMount(() => h(Modal, {
         // props
       }))
 
       // or mount to a named mount target
-      const node = this.$mount(() => h(Modal, {
+      const node = this.$vueMount(() => h(Modal, {
         // props
       }), 'modals')
 

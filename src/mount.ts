@@ -1,74 +1,76 @@
-import {App, ComponentInternalInstance, markRaw, reactive} from "vue"
+import {markRaw, reactive}                    from "vue"
+import type {App, ComponentInternalInstance} from "vue"
 
-import {MOUNT}           from "./symbols"
-import Node, {MountNode} from "./node"
-import MountMixin        from "~/mixin/MountMixin"
+import {VUE_MOUNT_SYMBOL}                  from "./symbols"
+import Node                                from "./node"
+import type {ComponentInstance, MountNode} from "./node"
+import MountMixin                          from "~/mixin/MountMixin"
 
-let key = 0
+let idx = 0
+
+export type NodeMap = Map<string, Node>
+type NodeGroup = Record<string, NodeMap>
 
 export default class Mount {
 
-    static #instance: Mount
-    static #instances = new Map<App, Mount>()
+    static #_mount: Mount
+    static #_mounts = new Map<App, Mount>()
+
+    #app: App
+    readonly #nodes: NodeGroup
 
     static install(app: App) {
-        const instance = new Mount(app)
-        app.provide(MOUNT, instance)
+        const _mount = new Mount(app)
+        app.provide(VUE_MOUNT_SYMBOL, _mount)
         app.mixin(MountMixin)
-        Mount.#instance = instance
-        Mount.#instances.set(app, instance)
+        Mount.#_mount = _mount
+        Mount.#_mounts.set(app, _mount)
     }
 
     /**
      * Get the latest instance of the Mount class
      */
-    static get instance() {
-        return Mount.#instance
+    static getMount(app?: App) {
+        if (!app) return Mount.#_mount
+        return Mount.#_mounts.get(app)
     }
-
-    static getInstanceFor(app: App) {
-        return Mount.#instances.get(app)
-    }
-
-    #app: App
-    #nodes = reactive<Record<string, Set<Node>>>({})
 
     constructor(app: App) {
         markRaw(this)
         this.#app = app
+        this.#nodes = reactive({})
     }
 
     /**
      * Get all the available vNodes for a specific mount target
+     * @internal
      * @param target
      */
-    getNodesFor(target: string = "default") {
+    getNodes(target: string = "default") {
         if (!this.#nodes[target])
-            this.#nodes[target] = new Set()
+            this.#nodes[target] = new Map()
+
         return this.#nodes[target]
     }
 
-    protected getId(target: string) {
-        const id = ++key
+    #getId(target: string) {
+        const id = ++idx
         return `${target}-${id}`
     }
 
-
     mount(vnode: MountNode, target: string = "default", ctx?: ComponentInternalInstance | null) {
-        const id = this.getId(target)
+        const id = this.#getId(target)
 
         if (!this.#nodes[target])
-            this.#nodes[target] = new Set()
+            this.#nodes[target] = new Map()
 
-        const nodes = this.#nodes[target]
-
-        const node = new Node(vnode, id, target, this, ctx)
-        nodes.add(node)
+        const node = new Node({vnode, target, id, ctx: ctx as ComponentInstance, vueMount: this})
+        this.#nodes[target].set(id, node)
         return node
     }
 
-    removeNode(node: Node) {
+    deleteNode(node: Node) {
         if (!this.#nodes[node.target]) return
-        this.#nodes[node.target].delete(node)
+        this.#nodes[node.target].delete(node.id)
     }
 }

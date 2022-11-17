@@ -1,8 +1,8 @@
 import {ComponentOptionsMixin} from "vue"
-import {NODE}                  from "~/symbols"
+import {NODE_SYMBOL}           from "~/symbols"
 
 export default {
     inject: {
-        $node: NODE
+        $node: NODE_SYMBOL
     }
 } as ComponentOptionsMixin
