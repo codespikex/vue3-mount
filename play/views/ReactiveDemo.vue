@@ -51,7 +51,7 @@
 import {defineComponent, h, provide, reactive, ref} from "vue"
 import {useMount}                                   from "~/index"
 import HelloWorld                                   from "play/components/HelloWorld.vue"
-import MountTarget                                  from "~/components/MountTarget"
+import MountTarget                                  from "~/index"
 
 export default defineComponent({
   name: "ReactiveDemo",
@@ -69,9 +69,9 @@ export default defineComponent({
 
     function mountReactive() {
       mount(() => h(HelloWorld, {
-            msg: inputRef.value,
-            name: form.name
-          }), 'reactive')
+        msg: inputRef.value,
+        name: form.name
+      }), "reactive")
     }
 
     return {
