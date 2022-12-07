@@ -29,7 +29,10 @@ export const vMount: ObjectDirective<VShowElement> = {
                     }
 
                     return new Promise((resolve: () => void) => {
-                        transition.leave(el, resolve)
+                        transition.leave(el, () => {
+                            setDisplay(el, false)
+                            resolve()
+                        })
                     }) as Promise<void>
                 }
 
