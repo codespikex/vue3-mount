@@ -8,9 +8,11 @@ import useMount               from "./composable/useMount"
 import getNode                from "./composable/getNode"
 import type {UseMountOptions} from "~/composable/useMount"
 
-import Node, {MountNode} from "~/node"
-import NodeMixin         from "~/mixin/NodeMixin"
+import Node, {MountNode, ComponentInstance} from "~/node"
 
+import NodeMixin from "~/mixin/NodeMixin"
+
+export * from "~/symbols"
 export default Mount
 
 export const useMountNode = getNode
@@ -23,7 +25,9 @@ export {
     Portal,
     vMount,
 
-    NodeMixin
+    NodeMixin,
+    MountNode,
+    ComponentInstance
 }
 
 declare module "@vue/runtime-core" {
