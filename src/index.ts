@@ -26,8 +26,8 @@ export {
     vMount,
 
     NodeMixin,
-    MountNode,
-    ComponentInstance
+    type MountNode,
+    type ComponentInstance
 }
 
 declare module "@vue/runtime-core" {
