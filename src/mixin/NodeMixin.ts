@@ -1,5 +1,5 @@
-import {ComponentOptionsMixin} from "vue"
-import {NODE_SYMBOL}           from "~/symbols"
+import type {ComponentOptionsMixin} from "vue"
+import {NODE_SYMBOL}                from "~/symbols"
 
 export default {
     inject: {

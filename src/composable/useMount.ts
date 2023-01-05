@@ -1,8 +1,8 @@
 import {getCurrentInstance, inject, onBeforeUnmount, warn} from "vue"
 
-import Mount            from "~/mount"
-import type {NodeMap}   from "~/mount"
-import type {MountNode} from "~/node"
+import Mount                     from "~/mount"
+import type {NodeMap, MountNode} from "~/types"
+import type Node               from "~/node"
 
 import {__DEV__}                            from "~/utils"
 import {MIXIN_MAP_SYMBOL, VUE_MOUNT_SYMBOL} from "~/symbols"
@@ -30,7 +30,7 @@ export default function useMount(options: UseMountOptions = {}) {
     } = options
 
     const ctx = getCurrentInstance()
-    const vueMount: Mount = (ctx ? inject(VUE_MOUNT_SYMBOL, Mount.getMount()) : Mount.getMount) as any
+    const vueMount: InstanceType<typeof Mount> = (ctx ? inject(VUE_MOUNT_SYMBOL, Mount.getMount()) : Mount.getMount) as any
 
     if (!vueMount && __DEV__) {
         warn("Please install the Mount plugin before using the useMount hook")
@@ -55,7 +55,7 @@ export default function useMount(options: UseMountOptions = {}) {
         warn("Please disable the destroy option when the hook is used outside of a setup scope.")
     }
 
-    return function (vnode: MountNode, target: string = "default") {
+    return function (vnode: MountNode, target: string = "default"): Node {
         let _ctx = provideCtx ? ctx : undefined
         const node = vueMount.mount(vnode, target, _ctx)
         if (destroy && _nodes) {

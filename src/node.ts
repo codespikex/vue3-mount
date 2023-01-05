@@ -1,13 +1,7 @@
-import {markRaw}                               from "vue"
-import type {ComponentInternalInstance, VNode} from "vue"
+import {markRaw}                           from "vue"
+import type {MountNode, ComponentInstance} from "~/types"
 
 import Mount from "~/mount"
-
-export type MountNode = () => VNode | VNode[]
-
-export type ComponentInstance = ComponentInternalInstance & {
-    provides: Record<string | symbol, any>
-}
 
 export type NodeOptions = {
     vnode: MountNode

@@ -8,11 +8,13 @@ import useMount               from "./composable/useMount"
 import getNode                from "./composable/getNode"
 import type {UseMountOptions} from "~/composable/useMount"
 
-import Node, {MountNode, ComponentInstance} from "~/node"
+import Node from "~/node"
 
 import NodeMixin from "~/mixin/NodeMixin"
 
-export * from "~/symbols"
+export *                                            from "~/symbols"
+import type {NodeMap, MountNode, ComponentInstance} from "./types"
+
 export default Mount
 
 export const useMountNode = getNode
@@ -26,6 +28,8 @@ export {
     vMount,
 
     NodeMixin,
+
+    type NodeMap,
     type MountNode,
     type ComponentInstance
 }

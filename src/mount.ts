@@ -1,14 +1,14 @@
 import {markRaw, reactive}                   from "vue"
 import type {App, ComponentInternalInstance} from "vue"
 
-import {VUE_MOUNT_SYMBOL}                  from "./symbols"
-import Node                                from "./node"
-import type {ComponentInstance, MountNode} from "./node"
-import MountMixin                          from "~/mixin/MountMixin"
+import {VUE_MOUNT_SYMBOL}                           from "./symbols"
+import Node                                         from "./node"
+import type {ComponentInstance, MountNode, NodeMap} from "./types"
+
+import MountMixin from "~/mixin/MountMixin"
 
 let idx = 0
 
-export type NodeMap = Map<string, Node>
 type NodeGroup = Record<string, NodeMap>
 
 export default class Mount {

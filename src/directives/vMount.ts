@@ -1,6 +1,7 @@
-import type {ObjectDirective}    from "@vue/runtime-core"
-import {NODE_SYMBOL}             from "~/symbols"
-import Node, {ComponentInstance} from "~/node"
+import type {ObjectDirective}   from "@vue/runtime-core"
+import {NODE_SYMBOL}            from "~/symbols"
+import Node                     from "~/node"
+import type {ComponentInstance} from "~/types"
 
 interface VShowElement extends HTMLElement {
     // _vod = vue original display

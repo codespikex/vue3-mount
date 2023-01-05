@@ -7,7 +7,7 @@ import {
 } from "vue"
 
 import Node                     from "~/node"
-import type {ComponentInstance} from "~/node"
+import type {ComponentInstance} from "~/types"
 
 import {NODE_SYMBOL} from "~/symbols"
 

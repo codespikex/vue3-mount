@@ -3,9 +3,9 @@ import type {App, ComponentOptionsMixin} from "vue"
 import {warn} from "vue"
 
 import Mount              from "~/mount"
-import type {NodeMap}     from "~/mount"
+import type {NodeMap}     from "~/types"
 import {__DEV__}          from "~/utils"
-import type {MountNode}   from "~/node"
+import type {MountNode}   from "~/types"
 import {MIXIN_MAP_SYMBOL} from "~/symbols"
 
 export default {
