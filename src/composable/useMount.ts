@@ -30,7 +30,7 @@ export default function useMount(options: UseMountOptions = {}) {
     } = options
 
     const ctx = getCurrentInstance()
-    const vueMount: InstanceType<typeof Mount> = (ctx ? inject(VUE_MOUNT_SYMBOL, Mount.getMount()) : Mount.getMount) as any
+    const vueMount: InstanceType<typeof Mount> = (ctx ? inject(VUE_MOUNT_SYMBOL, Mount.getMount()) : Mount.getMount()) as any
 
     if (!vueMount && __DEV__) {
         warn("Please install the Mount plugin before using the useMount hook")
