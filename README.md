@@ -1,3 +1,6 @@
+> [!WARNING]
+> This package is unmaintained and too complex for a simple wormhole solution.
+
 ## Introduction
 
 Vue3Mount is a lightweight api for dynamically mounting Vue components.
